@@ -1,6 +1,6 @@
 # Sentiment Analysis Microservice
 
-This project implements a microservice for sentiment analysis using **FastAPI**. The microservice exposes two main endpoints:
+This project implements a microservice for sentiment analysis using **FastAPI**. The microservice is built following the **MVC (Model-View-Controller)** architectural pattern and exposes two main endpoints:
 
 1. **`/predict`**: Uses a custom-trained sentiment analysis model to predict the sentiment of the input text.
 2. **`/predict_external`**: Sends the input text to an external AI API (e.g., Hugging Face) for sentiment prediction.
@@ -9,24 +9,46 @@ The API can be tested through the interactive **Swagger UI** or by using tools s
 
 ---
 
-## **Project Structure**
+## **Project Structure (Following MVC Pattern)**
 
 ```
 .
 ├── app
 │   ├── __init__.py               # Initialize the 'app' package (empty file)
-│   ├── model.py                  # Model logic (load and use the sentiment model)
-│   ├── controller.py             # Controller logic (API routing and logic)
-│   └── main.py                   # Entry point to run the API server
+│   ├── model.py                  # Model logic (loads and uses the sentiment model) - [Model Layer]
+│   ├── controller.py             # Controller logic (API routing and logic) - [Controller Layer]
+│   └── main.py                   # Entry point to run the API server (starts the application) - [Controller Layer]
 ├── model
-│   ├── sentiment_model.pkl       # Saved trained sentiment model
-│   └── vectorizer.pkl            # Saved vectorizer for text data
-├── train_model.py                # Script to train and save the model
+│   ├── sentiment_model.pkl       # Saved trained sentiment model - [Model Layer]
+│   └── vectorizer.pkl            # Saved vectorizer for text data - [Model Layer]
+├── train_model.py                # Script to train and save the model - [Model Layer]
 ├── tests
-│   └── test_api.py               # Unit tests for the API
+│   └── test_api.py               # Unit tests for the API - [Tests]
 ├── README.md                     # Instructions for setup and usage
 └── requirements.txt              # Python dependencies
 ```
+
+---
+
+## **MVC Pattern in This Project**
+
+The **MVC (Model-View-Controller)** pattern organizes the project into three main components:
+
+1. **Model**:
+   - Handles the logic of loading, training, and saving models for sentiment analysis.
+   - In this project, the **Model** layer consists of:
+     - `model/sentiment_model.pkl`: Pre-trained sentiment analysis model.
+     - `model/vectorizer.pkl`: TF-IDF vectorizer for transforming input text.
+     - `train_model.py`: Script to train the sentiment analysis model.
+     - `app/model.py`: Contains the `SentimentModel` class which loads and interacts with the trained model.
+2. **View**:
+   - In this API-based microservice, there is no traditional "View" layer (such as HTML templates). The **API responses** act as the "view" by returning the output (sentiment prediction) to the user.
+   - **Swagger UI** (`http://127.0.0.1:8000/docs`) serves as the front-end for testing and visualizing the API responses.
+3. **Controller**:
+   - Controls the flow of the application, handling user requests and providing appropriate responses.
+   - The **Controller** layer consists of:
+     - `app/controller.py`: Contains the API endpoints (`/predict`, `/predict_external`, `/health`) and routing logic for processing requests.
+     - `app/main.py`: The entry point that runs the FastAPI server and ties together the routes defined in `controller.py`.
 
 ---
 
@@ -172,6 +194,12 @@ curl -X POST "http://127.0.0.1:8000/predict_external" \
 }
 ```
 
+The labels in the external model might be represented as:
+
+- **LABEL_0**: Negative
+- **LABEL_1**: Neutral
+- **LABEL_2**: Positive
+
 ---
 
 ## **Testing with Swagger UI**
@@ -210,11 +238,6 @@ FastAPI automatically generates an interactive **Swagger UI** where you can test
    - Click **"Execute"** to send the request to the external AI API.
    - The predicted sentiment and confidence score from the external model will appear in the response section.
 
-   The Response could be interpreted as:
-   LABEL_0 --> Negative
-   LABEL_1 --> Neutral
-   LABEL_2 --> Positive
-
 ---
 
 ## **Running Unit Tests**
@@ -231,4 +254,4 @@ This will run the test cases located in the `tests/test_api.py` file.
 
 ## **Conclusion**
 
-This sentiment analysis microservice provides two main endpoints: one that uses a custom-trained model and another that uses an external AI API for sentiment predictions. You can interact with the API through **Swagger UI**, **curl**, or **Postman**.
+This sentiment analysis microservice is structured following the **MVC** pattern. The project separates the concerns of data handling, control logic, and view (API responses). It provides two main endpoints: one that uses a custom-trained model and another that uses an external AI API for sentiment predictions. You can interact with the API through **Swagger UI**, **curl**, or **Postman**.
